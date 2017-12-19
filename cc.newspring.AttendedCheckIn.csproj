@@ -33,13 +33,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DotLiquid">
+      <HintPath>..\RockWeb\Bin\DotLiquid.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework">
-      <HintPath>..\Rock\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\RockWeb\Bin\EntityFramework.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="EntityFramework.SqlServer">
-      <HintPath>..\Rock\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\RockWeb\Bin\EntityFramework.SqlServer.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="Rock">
+      <HintPath>..\RockWeb\Bin\Rock.dll</HintPath>
+    </Reference>
+    <Reference Include="Rock.Rest">
+      <HintPath>..\RockWeb\Bin\Rock.Rest.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -66,23 +75,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\rock\DotLiquid\DotLiquid.csproj">
-      <Project>{00EDCB8D-EF33-459C-AD62-02876BD24DFF}</Project>
-      <Name>DotLiquid</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\rock\Rock.Rest\Rock.Rest.csproj">
-      <Project>{b89dfd33-ce93-44e1-8616-c31acdfe89cb}</Project>
-      <Name>Rock.Rest</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\rock\Rock\Rock.csproj">
-      <Project>{8f8c2a79-24f4-4157-8b99-45f75fa85799}</Project>
-      <Name>Rock</Name>
-      <Private>False</Private>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

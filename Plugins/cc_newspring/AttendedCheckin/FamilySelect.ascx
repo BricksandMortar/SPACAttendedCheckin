@@ -148,9 +148,6 @@
                             <div class="col-xs-2">
                                 <Rock:RockTextBox ID="tbPersonLastName" runat="server" CssClass="col-xs-12" Label="Last Name" ValidationGroup="Person" />
                             </div>
-                            <div class="col-xs-1">
-                                <Rock:RockDropDownList ID="ddlPersonSuffix" runat="server" CssClass="col-xs-12" Label="Suffix" />
-                            </div>
                             <div class="col-xs-2">
                                 <Rock:DatePicker ID="dpPersonDOB" runat="server" Label="Date of Birth" CssClass="col-xs-12 date-picker" ValidationGroup="Person" data-show-age="true" />
                             </div>
@@ -160,8 +157,14 @@
                             <div class="col-xs-2">
                                 <Rock:RockDropDownList ID="ddlPersonAbilityGrade" runat="server" Label="Ability/Grade" CssClass="col-xs-12" />
                             </div>
-                            <div class="col-xs-1 shift-up centered">
-                                <Rock:RockCheckBox ID="cbPersonSpecialNeeds" Label="Special Needs" runat="server" CssClass="" />
+                            <div class="col-xs-2">
+                                <Rock:PhoneNumberBox ID="pnPhoneNumber" runat="server" CssClass="col-xs-12" Label="Phone Number" />
+                            </div>
+                            <div class="col-xs-2">
+                                <Rock:RockTextBox ID="tbAllergies" Text="None" Label="Allergies" runat="server" CssClass="col-xs-12" />
+                            </div>
+                            <div class="col-xs-4">
+                                <Rock:RockTextBox ID="tbNotes" Label="Notes" runat="server" CssClass="col-xs-12"/>
                             </div>
 
                             <div class="row flush-sides">
