@@ -854,19 +854,19 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
 
                 selectedFamily = selectedFamily ?? CurrentCheckInState.CheckIn.Families.FirstOrDefault( f => f.Selected );
 
-//                if ( selectedFamily != null && selectedFamily.People.Any( f => !f.ExcludedByFilter ) )
-//                {
-//                    memberDataSource = selectedFamily.People.Where( f => f.FamilyMember && !f.ExcludedByFilter )
-//                        .OrderByDescending( p => p.Person.AgePrecise ).ToList();
-//                    memberDataSource.ForEach( p => p.Selected = true );
-//
-//                    visitorDataSource = selectedFamily.People.Where( f => !f.FamilyMember && !f.ExcludedByFilter )
-//                        .OrderByDescending( p => p.Person.AgePrecise ).ToList();
-//
-//                    hfPersonIds.Value = string.Join( ",", selectedFamily.People.Where( f => !f.ExcludedByFilter && ( f.FamilyMember || f.Selected ) )
-//                        .Select( f => f.Person.Id ) ) + ",";
-//                    ViewState["hfPersonIds"] = hfPersonIds.Value;
-//                }
+                if ( selectedFamily != null && selectedFamily.People.Any( f => !f.ExcludedByFilter ) )
+                {
+                    memberDataSource = selectedFamily.People.Where( f => f.FamilyMember && !f.ExcludedByFilter )
+                        .OrderByDescending( p => p.Person.AgePrecise ).ToList();
+                    memberDataSource.ForEach( p => p.Selected = true );
+
+                    visitorDataSource = selectedFamily.People.Where( f => !f.FamilyMember && !f.ExcludedByFilter )
+                        .OrderByDescending( p => p.Person.AgePrecise ).ToList();
+
+                    hfPersonIds.Value = string.Join( ",", selectedFamily.People.Where( f => !f.ExcludedByFilter && ( f.FamilyMember || f.Selected ) )
+                        .Select( f => f.Person.Id ) ) + ",";
+                    ViewState["hfPersonIds"] = hfPersonIds.Value;
+                }
 
                 lvPerson.DataSource = memberDataSource;
                 lvPerson.DataBind();
