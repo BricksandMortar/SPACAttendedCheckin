@@ -44,7 +44,6 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
     [Category( "Check-in > Attended" )]
     [Description( "Attended Check-In Confirmation Block" )]
     [LinkedPage( "Activity Select Page" )]
-    [BooleanField( "Display Group Names", "By default location names are shown in the grid.  Check this option to show the group names instead.", false )]
     [BooleanField( "Print Individual Labels", "Select this option to print one label per person's group, location, & schedule.", false )]
     [BooleanField( "Remove Attendance On Checkout", "By default, the attendance is given a checkout date.  Select this option to completely remove attendance on checkout.", false )]
     [BooleanField( "Display Child Age/Grade", "By default, the person name is the only thing displayed. Select this option to display age and grade to help with child selections.", false, key: "DisplayChildAgeGrade" )]
@@ -152,9 +151,8 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                                 var checkIn = new Activity();
                                 checkIn.Name = person.Person.FullName;
                                 checkIn.Age = person.Person.Age < 18 ? person.Person.Age.ToStringSafe() : string.Empty;
-                                checkIn.Location = GetAttributeValue( "DisplayGroupNames" ).AsBoolean()
-                                    ? group.Group.Name
-                                    : location.Location.Name;
+                                checkIn.Location = location.Location.Name;
+                                checkIn.Group = group.Group.Name;
                                 checkIn.Schedule = schedule.Schedule.Name;
                                 checkIn.PersonId = person.Person.Id;
                                 checkIn.GroupId = group.Group.Id;
@@ -733,6 +731,8 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
 
             public string Grade { get; set; }
 
+            public string Group { get; set; }
+
             public int GroupId { get; set; }
 
             public string Location { get; set; }
@@ -749,6 +749,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
             {
                 PersonId = 0;
                 Name = string.Empty;
+                Group = string.Empty;
                 GroupId = 0;
                 Location = string.Empty;
                 LocationId = 0;

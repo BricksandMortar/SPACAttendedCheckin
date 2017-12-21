@@ -46,6 +46,24 @@
                         </ContentTemplate>
                     </asp:UpdatePanel>
                 </div>
+                                
+                <div class="col-xs-3">
+                    <asp:UpdatePanel ID="pnlGroups" runat="server" UpdateMode="Conditional">
+                        <ContentTemplate>
+                            <h3 id="hdrGroups" runat="server" class="text-center">Groups</h3>
+                            <asp:ListView ID="lvGroup" runat="server" OnPagePropertiesChanging="lvGroup_PagePropertiesChanging" OnItemCommand="lvGroup_ItemCommand" OnItemDataBound="lvGroup_ItemDataBound">
+                                <ItemTemplate>
+                                    <asp:LinkButton ID="lbGroup" runat="server" CssClass="btn btn-primary btn-lg btn-block btn-checkin-select"></asp:LinkButton>
+                                </ItemTemplate>
+                            </asp:ListView>
+                            <asp:DataPager ID="dpGroup" runat="server" PageSize="5" PagedControlID="lvGroup">
+                                <Fields>
+                                    <asp:NextPreviousPagerField ButtonType="Button" ButtonCssClass="pagination btn btn-primary btn-checkin-select" />
+                                </Fields>
+                            </asp:DataPager>
+                        </ContentTemplate>
+                    </asp:UpdatePanel>
+                </div>
 
                 <div class="col-xs-3">
                     <asp:UpdatePanel ID="pnlLocations" runat="server" UpdateMode="Conditional">
