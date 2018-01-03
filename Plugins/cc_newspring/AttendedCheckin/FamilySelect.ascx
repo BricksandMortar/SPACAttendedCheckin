@@ -161,7 +161,7 @@
                                 <Rock:PhoneNumberBox ID="pnPhoneNumber" runat="server" CssClass="col-xs-12" Label="Phone Number" />
                             </div>
                             <div class="col-xs-2">
-                                <Rock:RockTextBox ID="tbAllergies" Text="None" Label="Allergies" runat="server" CssClass="col-xs-12" />
+                                <Rock:RockTextBox ID="tbAllergies" Text="No Allergies" Label="Allergies" runat="server" CssClass="col-xs-12" />
                             </div>
                             <div class="col-xs-4">
                                 <Rock:RockTextBox ID="tbNotes" Label="Notes" runat="server" CssClass="col-xs-12"/>
@@ -179,7 +179,6 @@
                                             <Rock:RockBoundField HeaderStyle-CssClass="col-xs-1" ItemStyle-CssClass="col-xs-1" HeaderText="Age" DataField="Age" SortExpression="Age" />
                                             <Rock:RockBoundField HeaderStyle-CssClass="col-xs-2" ItemStyle-CssClass="col-xs-2" HeaderText="Gender" DataField="Gender" SortExpression="Gender" />
                                             <Rock:RockBoundField HeaderStyle-CssClass="col-xs-2" ItemStyle-CssClass="col-xs-2" HeaderText="Ability/Grade" DataField="Attribute" SortExpression="Attribute" />
-                                            <Rock:RockBoundField HeaderStyle-CssClass="col-xs-1" ItemStyle-CssClass="col-xs-1" HeaderText="Special Needs" DataField="HasSpecialNeeds" SortExpression="HasSpecialNeeds" />
                                             <asp:TemplateField>
                                                 <ItemTemplate>
                                                     <Rock:BootstrapButton ID="lbAdd" runat="server" CssClass="btn btn-lg btn-primary" CommandName="Add"
@@ -230,53 +229,66 @@
                     <div class="checkin-body">
                         <asp:ListView ID="lvNewFamily" runat="server" OnPagePropertiesChanging="lvNewFamily_PagePropertiesChanging" OnItemDataBound="lvNewFamily_ItemDataBound">
                             <LayoutTemplate>
-                                <div class="row large-font">
-                                    <div class="col-xs-2">
-                                        <label>First Name</label>
-                                    </div>
-                                    <div class="col-xs-2">
-                                        <label>Last Name</label>
-                                    </div>
-                                    <div class="col-xs-1">
-                                        <label>Suffix</label>
-                                    </div>
-                                    <div class="col-xs-2">
-                                        <label>Date of Birth</label>
-                                    </div>
-                                    <div class="col-xs-2">
-                                        <label>Gender</label>
-                                    </div>
-                                    <div class="col-xs-2">
-                                        <label id="famAbilityGrade" runat="server">Ability/Grade</label>
-                                    </div>
-                                    <div class="col-xs-1">
-                                        <label>Special Needs</label>
-                                    </div>
-                                </div>
+<%--                                <div class="row large-font">--%>
+<%--                                    <div class="col-xs-2">--%>
+<%--                                        <label>First Name</label>--%>
+<%--                                    </div>--%>
+<%--                                    <div class="col-xs-2">--%>
+<%--                                        <label>Last Name</label>--%>
+<%--                                    </div>--%>
+<%--                                    <div class="col-xs-2">--%>
+<%--                                        <label>Date of Birth</label>--%>
+<%--                                    </div>--%>
+<%--                                    <div class="col-xs-2">--%>
+<%--                                        <label>Gender</label>--%>
+<%--                                    </div>--%>
+<%--                                    <div class="col-xs-2">--%>
+<%--                                        <label id="famAbilityGrade" runat="server">Ability/Grade</label>--%>
+<%--                                    </div>--%>
+<%--                                    <div class="col-xs-2">--%>
+<%--                                        <label>Cell</label>--%>
+<%--                                    </div>--%>
+<%--                                </div>--%>
+<%--                                <div class="row large-font">--%>
+<%--                                    <div class="col-xs-4">--%>
+<%--                                        <label>Cell Number</label>--%>
+<%--                                    </div>--%>
+<%--                                    <div class="col-xs-2">--%>
+<%--                                        <label>Allergies</label>--%>
+<%--                                    </div>--%>
+<%--                                    <div class="col-xs-4">--%>
+<%--                                        <label>Notes</label>--%>
+<%--                                    </div>--%>
+<%--                                </div>--%>
                                 <asp:PlaceHolder ID="itemPlaceholder" runat="server" />
                             </LayoutTemplate>
                             <ItemTemplate>
-                                <div class="row expanded">
+                                <div class="row margin-b-sm">
                                     <div class="col-xs-2">
-                                        <Rock:RockTextBox ID="tbFirstName" runat="server" Text='<%# ((SerializedPerson)Container.DataItem).FirstName %>' ValidationGroup="Family" />
+                                        <Rock:RockTextBox ID="tbFirstName" runat="server" Placeholder="First Name" Text='<%# ((SerializedPerson)Container.DataItem).FirstName %>' ValidationGroup="Family" />
                                     </div>
                                     <div class="col-xs-2">
-                                        <Rock:RockTextBox ID="tbLastName" runat="server" Text='<%# ((SerializedPerson)Container.DataItem).LastName %>' ValidationGroup="Family" />
-                                    </div>
-                                    <div class="col-xs-1">
-                                        <Rock:RockDropDownList ID="ddlSuffix" runat="server" />
+                                        <Rock:RockTextBox ID="tbLastName" runat="server" Placeholder="Last Name" Text='<%# ((SerializedPerson)Container.DataItem).LastName %>' ValidationGroup="Family" />
                                     </div>
                                     <div class="col-xs-2">
-                                        <Rock:DatePicker ID="dpBirthDate" runat="server" SelectedDate='<%# ((SerializedPerson)Container.DataItem).BirthDate %>' ValidationGroup="Family" CssClass="date-picker" data-show-age="true" />
+                                        <Rock:DatePicker ID="dpBirthDate" runat="server" Placeholder="Date of Birth" SelectedDate='<%# ((SerializedPerson)Container.DataItem).BirthDate %>' ValidationGroup="Family" CssClass="date-picker" data-show-age="true" />
                                     </div>
                                     <div class="col-xs-2">
-                                        <Rock:RockDropDownList ID="ddlGender" runat="server" ValidationGroup="Family" />
+                                        <Rock:RockDropDownList ID="ddlGender" Placeholder="Gender" runat="server" ValidationGroup="Family" />
                                     </div>
-                                    <div class="col-xs-2">
+                                    <div class="col-xs-4">
                                         <Rock:RockDropDownList ID="ddlAbilityGrade" runat="server" />
                                     </div>
-                                    <div class="col-xs-1">
-                                        <Rock:RockCheckBox ID="cbSpecialNeeds" runat="server" />
+                               </div>
+                                <div class="row margin-b-md">
+                                    <div class="col-xs-4">
+                                        <Rock:PhoneNumberBox ID="pnPhoneNumber" Placeholder="Cell" runat="server" ValidationGroup="Family" />
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <Rock:RockTextBox ID="tbAllergies" Text="No Allergies" runat="server" ValidationGroup="Family" />
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <Rock:RockTextBox ID="tbNotes" Placeholder="Notes" runat="server" ValidationGroup="Family" />
                                     </div>
                                 </div>
                             </ItemTemplate>

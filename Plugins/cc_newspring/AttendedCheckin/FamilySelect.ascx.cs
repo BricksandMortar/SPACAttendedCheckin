@@ -73,44 +73,6 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
             }
         }
 
-        /// <summary>
-        /// Gets the person special needs attribute key.
-        /// </summary>
-        /// <value>
-        /// The special needs key.
-        /// </value>
-        private string SpecialNeedsKey
-        {
-            get
-            {
-                var specialNeedsKey = ViewState["SpecialNeedsKey"] as string;
-                if ( !string.IsNullOrWhiteSpace( specialNeedsKey ) )
-                {
-                    return specialNeedsKey;
-                }
-                else
-                {
-                    var personSpecialNeedsGuid = GetAttributeValue( "PersonSpecialNeedsAttribute" ).AsGuid();
-                    if ( personSpecialNeedsGuid != Guid.Empty )
-                    {
-                        var specialNeedsAttribute = AttributeCache.Read( personSpecialNeedsGuid );
-                        if ( specialNeedsAttribute != null )
-                        {
-                            specialNeedsKey = specialNeedsAttribute.Key;
-                            ViewState["SpecialNeedsKey"] = specialNeedsKey;
-                            return specialNeedsKey;
-                        }
-
-                        return string.Empty;
-                    }
-                    else
-                    {
-                        throw new Exception( "The Person Special Needs attribute is not selected or invalid on the FamilySelect page." );
-                    }
-                }
-            }
-        }
-
         #endregion Variables
 
         #region Control Methods
@@ -185,7 +147,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                 maWarning.Show( "Please pick or add a family.", ModalAlertType.Warning );
                 return;
             }
-            else if ( selectedFamily.People.Count == 0 )
+            if ( selectedFamily.People.Count == 0 )
             {
                 string errorMsg = "No one in this family is eligible to check-in.";
                 maWarning.Show( errorMsg, ModalAlertType.Warning );
@@ -439,6 +401,14 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
         {
             if ( e.Item.ItemType == ListViewItemType.DataItem )
             {
+                if (e.Item.DisplayIndex > 0)
+                {
+                    var tbAllergies = (RockTextBox) e.Item.FindControl("tbAllergies");
+                    var tbNotes = (RockTextBox) e.Item.FindControl("tbNotes");
+
+                    tbAllergies.Label = "";
+                    tbNotes.Label = "";
+                }
                 SerializedPerson person = ( (ListViewDataItem)e.Item ).DataItem as SerializedPerson;
 
                 var ddlGender = (RockDropDownList)e.Item.FindControl( "ddlGender" );
@@ -532,6 +502,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                 Ability = ddlPersonAbilityGrade.SelectedValue,
                 AbilityGroup = ddlPersonAbilityGrade.SelectedItem.Attributes["optiongroup"],
                 PhoneNumber = pnPhoneNumber.Number,
+                Allergies = tbAllergies.Text,
                 Notes = tbNotes.Text
             };
 
@@ -687,10 +658,9 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                 hasInput = hasInput || !string.IsNullOrWhiteSpace(newPerson.PhoneNumber);
 
                 newPerson.Allergies = ((TextBox) item.FindControl( "tbAllergies" ) ).Text;
-                hasInput = hasInput || !string.IsNullOrWhiteSpace( newPerson.Allergies );
 
 
-                newPerson.Allergies = ( ( TextBox ) item.FindControl( "tbNotes" ) ).Text;
+                newPerson.Notes = ( ( TextBox ) item.FindControl( "tbNotes" ) ).Text;
                 hasInput = hasInput || !string.IsNullOrWhiteSpace( newPerson.Notes );
 
                 if ( hasInput && !newPerson.IsValid() )
@@ -858,12 +828,11 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                 {
                     memberDataSource = selectedFamily.People.Where( f => f.FamilyMember && !f.ExcludedByFilter )
                         .OrderByDescending( p => p.Person.AgePrecise ).ToList();
-                    memberDataSource.ForEach( p => p.Selected = true );
 
                     visitorDataSource = selectedFamily.People.Where( f => !f.FamilyMember && !f.ExcludedByFilter )
                         .OrderByDescending( p => p.Person.AgePrecise ).ToList();
 
-                    hfPersonIds.Value = string.Join( ",", selectedFamily.People.Where( f => !f.ExcludedByFilter && ( f.FamilyMember || f.Selected ) )
+                    hfPersonIds.Value = string.Join( ",", selectedFamily.People.Where( p => !p.ExcludedByFilter && p.Selected )
                         .Select( f => f.Person.Id ) ) + ",";
                     ViewState["hfPersonIds"] = hfPersonIds.Value;
                 }
@@ -1115,7 +1084,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                     person.GradeOffset = personData.Ability.AsIntegerOrNull();
                 }
 
-                if (string.IsNullOrEmpty(personData.PhoneNumber))
+                if (!string.IsNullOrEmpty(personData.PhoneNumber))
                 {
                     var phoneNumber = new PhoneNumber();
                     phoneNumber.NumberTypeValueId = DefinedValueCache.Read(Rock.SystemGuid.DefinedValue.PERSON_PHONE_TYPE_MOBILE.AsGuid()).DefinedTypeId;
@@ -1129,7 +1098,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                 // Add the person so we can assign an ability (if set)
                 personService.Add( person );
 
-                if ( hasAbility )
+                if ( hasAbility || hasAllergies || hasNotes )
                 {
                     person.LoadAttributes( rockContext );
 
