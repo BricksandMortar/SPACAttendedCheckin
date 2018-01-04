@@ -158,10 +158,10 @@
                                 <Rock:RockDropDownList ID="ddlPersonAbilityGrade" runat="server" Label="Ability/Grade" CssClass="col-xs-12" />
                             </div>
                             <div class="col-xs-2">
-                                <Rock:PhoneNumberBox ID="pnPhoneNumber" runat="server" CssClass="col-xs-12" Label="Phone Number" />
+                                <Rock:PhoneNumberBox ID="pnPhoneNumber" runat="server" CssClass="col-xs-12" Label="Cell" />
                             </div>
                             <div class="col-xs-2">
-                                <Rock:RockTextBox ID="tbAllergies" Text="No Allergies" Label="Allergies" runat="server" CssClass="col-xs-12" />
+                                <Rock:RockTextBox ID="tbAllergies"  Label="Allergies" runat="server" CssClass="col-xs-12" />
                             </div>
                             <div class="col-xs-4">
                                 <Rock:RockTextBox ID="tbNotes" Label="Notes" runat="server" CssClass="col-xs-12"/>
@@ -285,7 +285,7 @@
                                         <Rock:PhoneNumberBox ID="pnPhoneNumber" Placeholder="Cell" runat="server" ValidationGroup="Family" />
                                     </div>
                                     <div class="col-xs-4">
-                                        <Rock:RockTextBox ID="tbAllergies" Text="No Allergies" runat="server" ValidationGroup="Family" />
+                                        <Rock:RockTextBox ID="tbAllergies" Placeholder="Allergies"  runat="server" ValidationGroup="Family" />
                                     </div>
                                     <div class="col-xs-4">
                                         <Rock:RockTextBox ID="tbNotes" Placeholder="Notes" runat="server" ValidationGroup="Family" />

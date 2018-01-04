@@ -401,14 +401,14 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
         {
             if ( e.Item.ItemType == ListViewItemType.DataItem )
             {
-                if (e.Item.DisplayIndex > 0)
-                {
-                    var tbAllergies = (RockTextBox) e.Item.FindControl("tbAllergies");
-                    var tbNotes = (RockTextBox) e.Item.FindControl("tbNotes");
-
-                    tbAllergies.Label = "";
-                    tbNotes.Label = "";
-                }
+//                if (e.Item.DisplayIndex > 0)
+//                {
+//                    var tbAllergies = (RockTextBox) e.Item.FindControl("tbAllergies");
+//                    var tbNotes = (RockTextBox) e.Item.FindControl("tbNotes");
+//
+//                    tbAllergies.Label = "";
+//                    tbNotes.Label = "";
+//                }
                 SerializedPerson person = ( (ListViewDataItem)e.Item ).DataItem as SerializedPerson;
 
                 var ddlGender = (RockDropDownList)e.Item.FindControl( "ddlGender" );
@@ -502,6 +502,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                 Ability = ddlPersonAbilityGrade.SelectedValue,
                 AbilityGroup = ddlPersonAbilityGrade.SelectedItem.Attributes["optiongroup"],
                 PhoneNumber = pnPhoneNumber.Number,
+                CountryCode =  pnPhoneNumber.CountryCode,
                 Allergies = tbAllergies.Text,
                 Notes = tbNotes.Text
             };
@@ -658,14 +659,14 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                 hasInput = hasInput || !string.IsNullOrWhiteSpace(newPerson.PhoneNumber);
 
                 newPerson.Allergies = ((TextBox) item.FindControl( "tbAllergies" ) ).Text;
-
+                hasInput = hasInput || !string.IsNullOrWhiteSpace( newPerson.Allergies );
 
                 newPerson.Notes = ( ( TextBox ) item.FindControl( "tbNotes" ) ).Text;
                 hasInput = hasInput || !string.IsNullOrWhiteSpace( newPerson.Notes );
 
                 if ( hasInput && !newPerson.IsValid() )
                 {
-                    maWarning.Show( "Validation: Name and Gender are required.", ModalAlertType.Information );
+                    maWarning.Show( "Validation: Name, Gender, and Allergies are required.", ModalAlertType.Information );
                     return;
                 }
 
@@ -1251,7 +1252,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
             public bool IsValid()
             {
                 // use OR and negation to immediately return when not valid
-                return !( string.IsNullOrWhiteSpace( FirstName ) || string.IsNullOrWhiteSpace( LastName ) || Gender == Gender.Unknown );
+                return !( string.IsNullOrWhiteSpace( FirstName ) || string.IsNullOrWhiteSpace( LastName ) || Gender == Gender.Unknown || string.IsNullOrWhiteSpace(Allergies) );
             }
 
             public SerializedPerson()
