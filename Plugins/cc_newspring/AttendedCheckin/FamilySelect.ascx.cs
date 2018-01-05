@@ -401,14 +401,6 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
         {
             if ( e.Item.ItemType == ListViewItemType.DataItem )
             {
-//                if (e.Item.DisplayIndex > 0)
-//                {
-//                    var tbAllergies = (RockTextBox) e.Item.FindControl("tbAllergies");
-//                    var tbNotes = (RockTextBox) e.Item.FindControl("tbNotes");
-//
-//                    tbAllergies.Label = "";
-//                    tbNotes.Label = "";
-//                }
                 SerializedPerson person = ( (ListViewDataItem)e.Item ).DataItem as SerializedPerson;
 
                 var ddlGender = (RockDropDownList)e.Item.FindControl( "ddlGender" );
@@ -1098,6 +1090,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
 
                 // Add the person so we can assign an ability (if set)
                 personService.Add( person );
+                rockContext.SaveChanges();
 
                 if ( hasAbility || hasAllergies || hasNotes )
                 {
@@ -1111,6 +1104,10 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                     if ( hasAllergies )
                     {
                         var allergyAttribute = AttributeCache.Read( Rock.SystemGuid.Attribute.PERSON_ALLERGY.AsGuid() );
+                        if (allergyAttribute == null)
+                        {
+                            throw new Exception("Can't find allergy attribute");
+                        }
                         person.SetAttributeValue( allergyAttribute.Key, personData.Allergies );
                     }
 
