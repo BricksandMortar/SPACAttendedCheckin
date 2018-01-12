@@ -417,17 +417,17 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                     ddlAbilityGrade.SelectedValue = person.Ability;
                 }
 
-                // set the header for this section manually since it's generated on the fly
-                var famAbilityGrade = (HtmlGenericControl)lvNewFamily.FindControl( "famAbilityGrade" );
-                if ( famAbilityGrade != null && ddlAbilityGrade.Items.Count > 0 )
-                {
-                    var allCategories = ddlAbilityGrade.Items.Cast<ListItem>()
-                        .Where( i => i.Attributes.Count > 0 )
-                        .Select( i => i.Attributes["optiongroup"] ).Distinct()
-                        .OrderBy( i => i ).ToList();
-
-                    famAbilityGrade.InnerText = String.Join( "/", allCategories );
-                }
+                //                // set the header for this section manually since it's generated on the fly
+                //                var famAbilityGrade = (HtmlGenericControl)lvNewFamily.FindControl( "famAbilityGrade" );
+                //                if ( famAbilityGrade != null && ddlAbilityGrade.Items.Count > 0 )
+                //                {
+                //                    var allCategories = ddlAbilityGrade.Items.Cast<ListItem>()
+                //                        .Where( i => i.Attributes.Count > 0 )
+                //                        .Select( i => i.Attributes["optiongroup"] ).Distinct()
+                //                        .OrderBy( i => i ).ToList();
+                //
+                //                    famAbilityGrade.InnerText = String.Join( "/", allCategories );
+                //                }
             }
         }
 
@@ -559,7 +559,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
             }
             else
             {
-                maWarning.Show( "Validation: Name and Gender are required.", ModalAlertType.Information );
+                maWarning.Show( "Validation: Name, Gender and Allergies are required.", ModalAlertType.Information );
             }
         }
 

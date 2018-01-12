@@ -736,18 +736,31 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
             person.LastName = tbLastName.Text;
             currentPerson.Person.LastName = tbLastName.Text;
 
-            person.SuffixValueId = ddlSuffix.SelectedValueAsId();
-            currentPerson.Person.SuffixValueId = ddlSuffix.SelectedValueAsId();
+            if (!string.IsNullOrWhiteSpace(pnPhoneNumber.Text))
+            {
+                var cellType = DefinedValueCache.Read( Rock.SystemGuid.DefinedValue.PERSON_PHONE_TYPE_MOBILE );
+                var phoneNumber = person.PhoneNumbers.FirstOrDefault( pn => pn.NumberTypeValueId == cellType.DefinedTypeId );
+                if (phoneNumber == null)
+                {
+                    phoneNumber = new PhoneNumber();
+                    phoneNumber.NumberTypeValueId = cellType.DefinedTypeId;
+                    phoneNumber.Number = pnPhoneNumber.Number;
+                    phoneNumber.CountryCode = pnPhoneNumber.CountryCode;
+                    phoneNumber.NumberFormatted = PhoneNumber.FormattedNumber( pnPhoneNumber.CountryCode, pnPhoneNumber.Text );
+                    phoneNumber.IsMessagingEnabled = true;
+                    person.PhoneNumbers.Add(phoneNumber);
+                }
+            }
 
             var DOB = dpDOB.SelectedDate;
             if ( DOB != null )
             {
-                person.BirthDay = ( ( DateTime ) DOB ).Day;
-                currentPerson.Person.BirthDay = ( ( DateTime ) DOB ).Day;
-                person.BirthMonth = ( ( DateTime ) DOB ).Month;
-                currentPerson.Person.BirthMonth = ( ( DateTime ) DOB ).Month;
-                person.BirthYear = ( ( DateTime ) DOB ).Year;
-                currentPerson.Person.BirthYear = ( ( DateTime ) DOB ).Year;
+                person.BirthDay = ( (DateTime)DOB ).Day;
+                currentPerson.Person.BirthDay = ( (DateTime)DOB ).Day;
+                person.BirthMonth = ( (DateTime)DOB ).Month;
+                currentPerson.Person.BirthMonth = ( (DateTime)DOB ).Month;
+                person.BirthYear = ( (DateTime)DOB ).Year;
+                currentPerson.Person.BirthYear = ( (DateTime)DOB ).Year;
             }
 
             person.NickName = tbNickname.Text.Length > 0 ? tbNickname.Text : tbFirstName.Text;
@@ -775,10 +788,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                     currentPerson.Person.Attributes.Remove( "AbilityLevel" );
                 }
             }
-
-            // Always save the special needs value
-            person.SetAttributeValue( SpecialNeedsKey, cbSpecialNeeds.Checked ? "Yes" : string.Empty );
-            currentPerson.Person.SetAttributeValue( SpecialNeedsKey, cbSpecialNeeds.Checked ? "Yes" : string.Empty );
+            
 
             // store the allergies
             var allergyAttribute = AttributeCache.Read( new Guid( Rock.SystemGuid.Attribute.PERSON_ALLERGY ), rockContext );

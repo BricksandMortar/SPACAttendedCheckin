@@ -151,17 +151,14 @@
                             <div class="col-xs-2">
                                 <Rock:RockTextBox ID="tbLastName" runat="server" Label="Last Name" ValidationGroup="Person" />
                             </div>
-                            <div class="col-xs-1">
-                                <Rock:RockDropDownList ID="ddlSuffix" runat="server" Label="Suffix" />
-                            </div>
                             <div class="col-xs-2">
                                 <Rock:DatePicker ID="dpDOB" runat="server" Label="Date of Birth" ValidationGroup="Person" CssClass="date-picker" data-show-age="true" />
                             </div>
                             <div class="col-xs-2">
                                 <Rock:RockDropDownList ID="ddlAbilityGrade" runat="server" Label="Ability/Grade" />
                             </div>
-                            <div class="col-xs-1 shift-up centered">
-                                <Rock:RockCheckBox ID="cbSpecialNeeds" runat="server" Label="Special Needs" />
+                            <div class="col-xs-2">
+                                <Rock:PhoneNumberBox ID="pnPhoneNumber" runat="server" CssClass="col-xs-12" Label="Cell" />
                             </div>
                         </div>
                         <div class="row">
