@@ -669,7 +669,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         protected void lbSaveEditInfo_Click( object sender, EventArgs e )
         {
-            if ( string.IsNullOrEmpty( tbFirstName.Text ) || string.IsNullOrEmpty( tbLastName.Text ) || string.IsNullOrEmpty( dpDOB.Text ) )
+            if ( string.IsNullOrEmpty( tbFirstName.Text ) || string.IsNullOrEmpty( tbLastName.Text ) )
             {
                 Page.Validate( "Person" );
                 mdlInfo.Show();

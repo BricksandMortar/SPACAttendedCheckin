@@ -224,6 +224,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
         {
             lblAddPersonHeader.Text = "Add Visitor";
             hfNewPersonType.Value = "Visitor";
+            dobContainer.Visible = false;
             LoadPersonFields();
             mdlAddPerson.Show();
         }
@@ -237,6 +238,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
         {
             lblAddPersonHeader.Text = "Add Family Member";
             hfNewPersonType.Value = "Person";
+            dobContainer.Visible = true;
             LoadPersonFields();
             mdlAddPerson.Show();
         }

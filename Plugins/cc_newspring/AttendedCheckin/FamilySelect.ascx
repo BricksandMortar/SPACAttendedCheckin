@@ -148,7 +148,7 @@
                             <div class="col-xs-2">
                                 <Rock:RockTextBox ID="tbPersonLastName" runat="server" CssClass="col-xs-12" Label="Last Name" ValidationGroup="Person" />
                             </div>
-                            <div class="col-xs-2">
+                            <div class="col-xs-2" runat="server" id="dobContainer">
                                 <Rock:DatePicker ID="dpPersonDOB" runat="server" Label="Date of Birth" CssClass="col-xs-12 date-picker" ValidationGroup="Person" data-show-age="true" />
                             </div>
                             <div class="col-xs-2">
