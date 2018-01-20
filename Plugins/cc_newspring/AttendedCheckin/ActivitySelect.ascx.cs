@@ -687,6 +687,9 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
             person.LastName = tbLastName.Text;
             currentPerson.Person.LastName = tbLastName.Text;
 
+            person.PhotoId = hfPersonPhotoId.Value.AsIntegerOrNull();
+            currentPerson.Person.PhotoId = hfPersonPhotoId.Value.AsIntegerOrNull();
+
             if (!string.IsNullOrWhiteSpace(pnPhoneNumber.Text))
             {
                 var cellType = DefinedValueCache.Read( Rock.SystemGuid.DefinedValue.PERSON_PHONE_TYPE_MOBILE );
@@ -1011,6 +1014,14 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                 // load check-in notes
                 var notes = person.Person.GetAttributeValue( "LegalNotes" ) ?? string.Empty;
                 tbNoteText.Text = notes;
+
+                if ( person.Person.PhotoId != null )
+                {
+                    hfPersonPhotoId.Value = person.Person.PhotoId.ToString();
+                    btnTakePhoto.Text = "<i class='fa fa-check' ></i>";
+                    btnTakePhoto.CssClass = "btn btn-success";
+                    btnTakePhoto.Enabled = false;
+                }
             }
             else
             {
@@ -1091,5 +1102,32 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
         }
 
         #endregion Classes
+
+        protected void btnCancel_Click( object sender, EventArgs e )
+        {
+            mdlPhoto.Hide();
+            mdlInfo.Show();
+
+        }
+
+        protected void btnTakePhoto_Click( object sender, EventArgs e )
+        {
+            mdlInfo.Hide();
+            mdlPhoto.Show();
+        }
+
+        protected void btnPhotoId_Click( object sender, EventArgs e )
+        {
+            var photoId = hfPhotoId.Value;
+
+            mdlPhoto.Hide();
+            hfPersonPhotoId.Value = photoId;
+            btnTakePhoto.Text = "<i class='fa fa-check' ></i>";
+            btnTakePhoto.CssClass = "btn btn-success";
+            btnTakePhoto.Enabled = false;
+            mdlInfo.Show();
+
+
+        }
     }
 }

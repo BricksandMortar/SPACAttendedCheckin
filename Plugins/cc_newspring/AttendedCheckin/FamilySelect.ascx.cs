@@ -412,7 +412,18 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                     ddlGender.SelectedIndex = person.Gender.ConvertToInt();
                 }
 
-                var ddlAbilityGrade = (RockDropDownList)e.Item.FindControl( "ddlAbilityGrade" );
+                if ( person.PhotoId != null )
+                {
+                    var hfFamilyPhotoId =  ( HiddenField ) e.Item.FindControl( "hfFamilyPhotoId" ) ;
+                    hfFamilyPhotoId.Value = person.PhotoId.ToString();
+
+                    var btnFamilyTakePhoto = ( BootstrapButton ) e.Item.FindControl( "btnFamilyTakePhoto" );
+                    btnFamilyTakePhoto.Text = "<i class='fa fa-check' ></i>";
+                    btnFamilyTakePhoto.CssClass = "btn btn-success";
+                    btnFamilyTakePhoto.Enabled = false;
+                }
+
+                var ddlAbilityGrade = ( RockDropDownList ) e.Item.FindControl( "ddlAbilityGrade" );
                 ddlAbilityGrade.LoadAbilityAndGradeItems();
                 if ( !string.IsNullOrWhiteSpace( person.Ability ) )
                 {
@@ -477,6 +488,14 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
             rGridPersonResults.Visible = true;
             rGridPersonResults.PageSize = 4;
             lbNewPerson.Visible = true;
+
+            if ( !String.IsNullOrWhiteSpace( hfPersonPhotoId.Value ) )
+            {
+                btnTakePhoto.Text = "<i class='fa fa-check' ></i>";
+                btnTakePhoto.CssClass = "btn btn-success";
+                btnTakePhoto.Enabled = false;
+            }
+
             BindPersonGrid();
         }
 
@@ -498,7 +517,8 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                 PhoneNumber = pnPhoneNumber.Number,
                 CountryCode =  pnPhoneNumber.CountryCode,
                 Allergies = tbAllergies.Text,
-                Notes = tbNotes.Text
+                Notes = tbNotes.Text,
+                PhotoId = hfPersonPhotoId.Value.AsIntegerOrNull()
             };
 
             if ( newPerson.IsValid() )
@@ -658,6 +678,8 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                 newPerson.Notes = ( ( TextBox ) item.FindControl( "tbNotes" ) ).Text;
                 hasInput = hasInput || !string.IsNullOrWhiteSpace( newPerson.Notes );
 
+                newPerson.PhotoId = ( ( HiddenField ) item.FindControl( "hfFamilyPhotoId" ) ).Value.AsIntegerOrNull();
+
                 if ( hasInput && !newPerson.IsValid() )
                 {
                     maWarning.Show( "Validation: Name, Gender, and Allergies are required.", ModalAlertType.Information );
@@ -738,6 +760,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                 newPerson.Notes = ( ( TextBox ) item.FindControl( "tbNotes" ) ).Text;
                 newPerson.PhoneNumber = ((PhoneNumberBox) item.FindControl("pnPhoneNumber")).Number;
                 newPerson.CountryCode = ( ( PhoneNumberBox ) item.FindControl( "pnPhoneNumber" ) ).CountryCode;
+                newPerson.PhotoId = ( ( HiddenField ) item.FindControl( "hfFamilyPhotoId" ) ).Value.AsIntegerOrNull();
 
                 if ( previousPage.HasValue )
                 {
@@ -1051,6 +1074,8 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                 person.FirstName = personData.FirstName;
                 person.LastName = personData.LastName;
                 person.Gender = personData.Gender;
+                person.PhotoId = personData.PhotoId;
+
 
                 if ( personData.BirthDate != null )
                 {
@@ -1248,6 +1273,8 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
 
             public string CountryCode { get; set; }
 
+            public int? PhotoId { get; set; }
+
             public bool IsValid()
             {
                 // use OR and negation to immediately return when not valid
@@ -1266,9 +1293,71 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                 Notes = string.Empty;
                 PhoneNumber = String.Empty;
                 CountryCode = string.Empty;
+                PhotoId = null;
             }
         }
 
         #endregion NewPerson Class
+
+        protected void btnCancel_Click( object sender, EventArgs e )
+        {
+            mdlPhoto.Hide();
+            if ( hfSourceModal.Value == "Person" )
+            {
+                mdlAddPerson.Show();
+            }
+            else
+            {
+                mdlNewFamily.Show();
+            }
+        }
+
+        protected void btnTakePhoto_Click( object sender, EventArgs e )
+        {
+            hfSourceModal.Value = "Person";
+            mdlAddPerson.Hide();
+            mdlPhoto.Show();
+        }
+
+        protected void btnFamilyTakePhoto_Click( object sender, EventArgs e )
+        {
+            ListViewDataItem item = ( ListViewDataItem ) ( ( BootstrapButton ) sender ).NamingContainer;
+            var index = item.DataItemIndex;
+            hfSourceModal.Value = "Family";
+            hfPersonRowNumber.Value = index.ToString();
+            mdlNewFamily.Hide();
+            mdlPhoto.Show();
+        }
+
+        protected void btnPhotoId_Click( object sender, EventArgs e )
+        {
+            var photoId = hfPhotoId.Value;
+
+            mdlPhoto.Hide();
+            if ( hfSourceModal.Value == "Person" )
+            {
+                hfPersonPhotoId.Value = photoId;
+                btnTakePhoto.Text = "<i class='fa fa-check' ></i>";
+                btnTakePhoto.CssClass = "btn btn-success";
+                btnTakePhoto.Enabled = false;
+                mdlAddPerson.Show();
+            }
+            else
+            {
+                int? index = hfPersonRowNumber.Value.AsIntegerOrNull();
+                if ( index != null )
+                {
+                    HiddenField hfFamilyMember = lvNewFamily.Items[index.Value].FindControl( "hfFamilyPhotoId" ) as HiddenField;
+                    BootstrapButton btnFamilyTakePhoto = lvNewFamily.Items[index.Value].FindControl( "btnFamilyTakePhoto" ) as BootstrapButton;
+                    btnFamilyTakePhoto.Text = "<i class='fa fa-check' ></i>";
+                    btnFamilyTakePhoto.CssClass = "btn btn-success";
+                    btnFamilyTakePhoto.Enabled = false;
+                    hfFamilyMember.Value = photoId;
+                    mdlNewFamily.Show();
+                }
+
+            }
+
+        }
     }
 }
