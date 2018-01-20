@@ -180,7 +180,7 @@
 
                     <!-- Modal Body -->
                     <div class="checkin-body">
-                        <asp:HiddenField ID="hfPhotoId" runat="server" />
+                        <asp:TextBox ID="tbPhotoId" runat="server" Style="display: none;" />
                         <asp:Button runat="server" ID="btnPhotoId" Style="display: none;" OnClick="btnPhotoId_Click" />
                         <center>
                         <div id="video_box">
@@ -374,7 +374,7 @@
                     $('input[id$="btnUpload"]').attr('disabled', 'disabled');
                     stopVideo();
 
-                    $('<%= hfPhotoId.ClientID %>').val(photoId);
+                    $('input[id$="tbPhotoId"]').val(photoId);
                     $('input[id$="btnPhotoId"]').click();
                     return true;
                 },

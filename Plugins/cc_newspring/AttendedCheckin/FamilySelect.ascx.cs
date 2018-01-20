@@ -1331,7 +1331,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
 
         protected void btnPhotoId_Click( object sender, EventArgs e )
         {
-            var photoId = hfPhotoId.Value;
+            var photoId = tbPhotoId.Text;
 
             mdlPhoto.Hide();
             if ( hfSourceModal.Value == "Person" )
@@ -1354,6 +1354,18 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                     btnFamilyTakePhoto.Enabled = false;
                     hfFamilyMember.Value = photoId;
                     mdlNewFamily.Show();
+                }
+                foreach ( ListViewItem item in lvNewFamily.Items )
+                {
+                    var hfFamilyPhotoId = ( HiddenField ) item.FindControl( "hfFamilyPhotoId" ) as HiddenField;
+                    BootstrapButton btnFamilyTakePhoto = ( BootstrapButton ) item.FindControl( "btnFamilyTakePhoto" ) as BootstrapButton;
+                    if ( !String.IsNullOrWhiteSpace( hfFamilyPhotoId.Value ) )
+                    {
+                        btnFamilyTakePhoto.Text = "<i class='fa fa-check' ></i>";
+                        btnFamilyTakePhoto.CssClass = "btn btn-success";
+                        btnFamilyTakePhoto.Enabled = false;
+                    }
+
                 }
 
             }

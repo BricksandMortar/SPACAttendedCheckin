@@ -1118,7 +1118,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
 
         protected void btnPhotoId_Click( object sender, EventArgs e )
         {
-            var photoId = hfPhotoId.Value;
+            var photoId = tbPhotoId.Text;
 
             mdlPhoto.Hide();
             hfPersonPhotoId.Value = photoId;
