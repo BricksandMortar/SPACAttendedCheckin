@@ -982,7 +982,6 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
 
                 tbFirstName.Required = true;
                 tbLastName.Required = true;
-                dpDOB.Required = true;
 
                 if ( person.Person.GradeOffset.HasValue && person.Person.GradeOffset.Value >= 0 )
                 {
