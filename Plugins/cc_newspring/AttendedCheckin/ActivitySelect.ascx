@@ -212,6 +212,8 @@
     </ContentTemplate>
 </asp:UpdatePanel>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.4/bluebird.min.js"></script>
+
 <script type="text/javascript">
 
     var setClickEvents = function () {
@@ -275,11 +277,20 @@
             }
         };
 
-        function getAndStartVideo(constraints)
-        {
+        Webcam.set({
+            width: 425,
+            height: 425,
+            image_format: 'jpeg',
+            jpeg_quality: 90
+        });
+        Webcam.attach('#camera');
+
+        function getAndStartVideo(constraints) {
+            console.log('getAndStartVideo');
             var video = document.getElementById("video");
-            navigator.mediaDevices.getUserMedia(constraints).then((stream) =>
-            {
+            navigator.mediaDevices.getUserMedia(constraints).then(
+                function (stream) {
+                    console.log('stream');
                 video.srcObject = stream;
             });
         }

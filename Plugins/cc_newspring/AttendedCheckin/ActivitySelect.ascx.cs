@@ -1018,7 +1018,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                 {
                     hfPersonPhotoId.Value = person.Person.PhotoId.ToString();
                     btnTakePhoto.Text = "<i class='fa fa-check' ></i>";
-                    btnTakePhoto.CssClass = "btn btn-success disabled";
+                    btnTakePhoto.CssClass = "btn btn-success";
                     btnTakePhoto.Enabled = false;
                 }
             }
@@ -1122,7 +1122,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
             mdlPhoto.Hide();
             hfPersonPhotoId.Value = photoId;
             btnTakePhoto.Text = "<i class='fa fa-check' ></i>";
-            btnTakePhoto.CssClass = "btn btn-success disabled";
+            btnTakePhoto.CssClass = "btn btn-success";
             btnTakePhoto.Enabled = false;
             mdlInfo.Show();
 

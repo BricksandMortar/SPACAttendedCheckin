@@ -341,18 +341,16 @@
                         <asp:HiddenField ID="hfPersonRowNumber" runat="server" />
                         <asp:TextBox ID="tbPhotoId" runat="server" Style="display: none;" />
                         <asp:Button runat="server" ID="btnPhotoId" Style="display: none;" OnClick="btnPhotoId_Click" />
-                        <center>
-                        <div id="video_box">
-                            <video id="video" width="425" height="425" autoplay>Your browser does not support this streaming content.</video>
+
+                        <div id="camera">
                         </div>
-                        <canvas id="canvas" width="425" height="425" style="display: none"></canvas>
-                        </center>
+
                         <div id="uploadProgress" class="progress" style="display: none">
                             <div class="progress-bar progress-bar-striped active" style="width: 100%;"></div>
                         </div>
                         <div id="photoUploadMessage" class="alert alert-success" style="display: none; width: 80%;"></div>
 
-                        <div class="well" id="wellDiv">
+                        <div class="well" id="wellDiv" >
                             <div class="row">
                                 <div class="col-md-6 col-sm-6 col-xs-6">
                                     <asp:Button runat="server" ID="btnStart" Text="Start" class="btn btn-primary btn-lg" OnClientClick="return false;" UseSubmitBehavior="false" CausesValidation="false" />
@@ -371,6 +369,7 @@
     </ContentTemplate>
 </asp:UpdatePanel>
 
+<script src="/Plugins/cc_newspring/AttendedCheckin/Scripts/webcam.min.js"></script>
 <script type="text/javascript">
 
     function toggleFamily(element) {
@@ -438,34 +437,22 @@
 
     $(document).ready(function () {
         setModalEvents();
-
-        var constraints = {
-            video: {
-                mandatory: {
-                    maxWidth: 425,
-                    maxHeight: 425,
-                    minWidth: 425,
-                    minHeight: 425
-                }
-            }
-        };
-
-        function getAndStartVideo(constraints)
+        
+        function getAndStartVideo()
         {
-            var video = document.getElementById("video");
-            navigator.mediaDevices.getUserMedia(constraints).then((stream) =>
-            {
-                video.srcObject = stream;
+            Webcam.set({
+                width: 425,
+                height: 425,
+                image_format: 'jpeg',
+                jpeg_quality: 90,
+                swfURL: '/Plugins/cc_newspring/AttendedCheckin/Scripts/webcam.swf'
             });
+            Webcam.attach('#camera');
         }
 
-        function stopVideo()
-        {
-            var video = document.getElementById("video");
-
-            video.srcObject.getVideoTracks().forEach(track => track.stop());
-            $('canvas[id$="canvas"]').fadeOut("slow");
-            $('#video_box').fadeOut("slow");
+        function stopVideo() {
+            Webcam.unfreeze();
+            $('#camera').fadeOut("slow");
             $('input[id$="btnStop"]').hide();
             $('input[id$="btnStart"]').show();
             $('input[id$="btnPhoto"]').hide();
@@ -480,40 +467,28 @@
             $('input[id$="btnStart"]').hide();
             $('input[id$="btnStop"]').show();
             $('input[id$="btnPhoto"]').show();
-            $('canvas[id$="canvas"]').hide();
-            $('#video_box').fadeIn('fast');
+            $('#camera').fadeIn('fast');
 
-            var localMediaStream;
-            getAndStartVideo(constraints);
+            getAndStartVideo();
 
         });
 
-        $(document).on("click", 'input[id$="btnPhoto"]', function ()
-        {
-            var canvas = document.getElementById("canvas");
-            var context = canvas.getContext("2d");
-
-            context.drawImage(video, 0, 0, 425, 425);
-            $('#video_box').hide();
-            $('canvas[id$="canvas"]').fadeIn();
+        $(document).on("click", 'input[id$="btnPhoto"]', function () {
+            Webcam.freeze();
+//            $('#camera').hide();
             $('input[id$="btnPhoto"]').hide();
             $('input[id$="btnUpload"]').show().removeAttr('disabled');
             $('input[id$="btnRedo"]').show();
             $('#photoUploadMessage').hide();
-            // Stop all video streams.
-
-            video.srcObject.getVideoTracks().forEach(track => track.stop());
         });
 
         $(document).on("click", 'input[id$="btnRedo"]', function ()
         {
-            $('canvas[id$="canvas"]').hide();
-            $('#video_box').show();
+            Webcam.unfreeze();
             $('input[id$="btnRedo"]').hide();
             $('input[id$="btnPhoto"]').show().removeAttr('disabled');
             $('input[id$="btnUpload"]').attr('disabled', 'disabled');
             $('#photoUploadMessage').hide();
-            getAndStartVideo(constraints);
         });
 
         $(document).on("click", 'input[id$="btnCancel"]', function ()
