@@ -226,7 +226,10 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
             hfNewPersonType.Value = "Visitor";
             dobContainer.Visible = false;
             LoadPersonFields();
+
+            addbtnTakePhotoContainer.Visible = false;
             mdlAddPerson.Show();
+            
         }
 
         /// <summary>
@@ -240,6 +243,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
             hfNewPersonType.Value = "Person";
             dobContainer.Visible = true;
             LoadPersonFields();
+            addbtnTakePhotoContainer.Visible = true;
             mdlAddPerson.Show();
         }
 

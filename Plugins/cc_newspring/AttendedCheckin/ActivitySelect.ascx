@@ -182,12 +182,9 @@
                     <div class="checkin-body">
                         <asp:TextBox ID="tbPhotoId" runat="server" Style="display: none;" />
                         <asp:Button runat="server" ID="btnPhotoId" Style="display: none;" OnClick="btnPhotoId_Click" />
-                        <center>
-                        <div id="video_box">
-                            <video id="video" width="425" height="425" autoplay>Your browser does not support this streaming content.</video>
+                        <div id="camera">
                         </div>
-                        <canvas id="canvas" width="425" height="425" style="display: none"></canvas>
-                        </center>
+
                         <div id="uploadProgress" class="progress" style="display: none">
                             <div class="progress-bar progress-bar-striped active" style="width: 100%;"></div>
                         </div>
@@ -264,44 +261,25 @@
 
     $(document).ready(function () {
         setClickEvents();
-
-        
-        var constraints = {
-            video: {
-                mandatory: {
-                    maxWidth: 425,
-                    maxHeight: 425,
-                    minWidth: 425,
-                    minHeight: 425
-                }
-            }
-        };
-
         Webcam.set({
             width: 425,
             height: 425,
             image_format: 'jpeg',
-            jpeg_quality: 90
+            jpeg_quality: 90,
+            swfURL: '/Plugins/cc_newspring/AttendedCheckin/Scripts/webcam.swf'
         });
-        Webcam.attach('#camera');
 
-        function getAndStartVideo(constraints) {
-            console.log('getAndStartVideo');
-            var video = document.getElementById("video");
-            navigator.mediaDevices.getUserMedia(constraints).then(
-                function (stream) {
-                    console.log('stream');
-                video.srcObject = stream;
-            });
+        function setupWebcam()
+        {
+            console.log('Attach')
+            Webcam.attach('#camera');
         }
 
-        function stopVideo()
+        function closeWebcam()
         {
-            var video = document.getElementById("video");
-
-            video.srcObject.getVideoTracks().forEach(track => track.stop());
-            $('canvas[id$="canvas"]').fadeOut("slow");
-            $('#video_box').fadeOut("slow");
+            Webcam.reset();
+            console.log('Reset');
+            $('#camera').fadeOut("slow");
             $('input[id$="btnStop"]').hide();
             $('input[id$="btnStart"]').show();
             $('input[id$="btnPhoto"]').hide();
@@ -316,86 +294,69 @@
             $('input[id$="btnStart"]').hide();
             $('input[id$="btnStop"]').show();
             $('input[id$="btnPhoto"]').show();
-            $('canvas[id$="canvas"]').hide();
-            $('#video_box').fadeIn('fast');
-
-            var localMediaStream;
-            getAndStartVideo(constraints);
-
+            $('#camera').fadeIn('fast');
+            setupWebcam();
         });
+
 
         $(document).on("click", 'input[id$="btnPhoto"]', function ()
         {
-            var canvas = document.getElementById("canvas");
-            var context = canvas.getContext("2d");
-
-            context.drawImage(video, 0, 0, 425, 425);
-            $('#video_box').hide();
-            $('canvas[id$="canvas"]').fadeIn();
+            Webcam.freeze();
             $('input[id$="btnPhoto"]').hide();
             $('input[id$="btnUpload"]').show().removeAttr('disabled');
             $('input[id$="btnRedo"]').show();
             $('#photoUploadMessage').hide();
-            // Stop all video streams.
-
-            video.srcObject.getVideoTracks().forEach(track => track.stop());
         });
 
         $(document).on("click", 'input[id$="btnRedo"]', function ()
         {
-            $('canvas[id$="canvas"]').hide();
-            $('#video_box').show();
+            Webcam.unfreeze();
             $('input[id$="btnRedo"]').hide();
+            $('#photoUploadMessage').hide();
             $('input[id$="btnPhoto"]').show().removeAttr('disabled');
             $('input[id$="btnUpload"]').attr('disabled', 'disabled');
             $('#photoUploadMessage').hide();
-            getAndStartVideo(constraints);
         });
 
-        $(document).on("click", 'input[id$="btnCancel"]', function ()
+        $(document).on("click", 'a[id$="mdlPhoto_btnCancel"]', function ()
         {
-            stopVideo();
+            closeWebcam();
         });
 
         $(document).on("click", 'input[id$="btnUpload"]', function ()
         {
-            // This png often errors out trying to parse base64 on the server.
-            //var dataUrl = canvas.toDataURL("png");
-            var canvas = document.getElementById("canvas")
-            var dataUrl = canvas.toDataURL("image/jpeg", 0.95);
+            Webcam.snap(function (dataUrl)
+            {
+                $('#uploadProgress').fadeIn('fast');
+                // post the photo image to the server for the selected person.
+                var request = $.ajax({
+                    type: "POST",
+                    url: '<%=ResolveUrl("~/api/ProfilePicture/AddPhoto") %>',
+                    data: '\"' + dataUrl + '\"',
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (result)
+                    {
+                        var photoId = result;
+                        $('#uploadProgress').hide();
+                        $('#photoUploadMessage').removeClass('alert-error').addClass('alert-success').html('<i class="icon-ok"></i> Success');
+                        $('#photoUploadMessage').fadeIn('fast').delay(9000).fadeOut('slow');
+                        $('input[id$="btnUpload"]').attr('disabled', 'disabled');
+                        closeWebcam();
 
-            $('#uploadProgress').fadeIn('fast');
-            var data = {
-                img64: dataUrl
-            }
+                        $('input[id$="tbPhotoId"]').val(photoId);
 
-            // post the photo image to the server for the selected person.
-            var request = $.ajax({
-                type: "POST",
-                url: '<%=ResolveUrl("~/api/ProfilePicture/AddPhoto") %>',
-                data: JSON.stringify(dataUrl),
-                contentType: "application/json",
-                dataType: "json",
-                success: function (result)
-                {
-                    var photoId = result;
-                    $('#uploadProgress').hide();
-                    $('#photoUploadMessage').removeClass('alert-error').addClass('alert-success').html('<i class="icon-ok"></i> Success');
-                    $('#photoUploadMessage').fadeIn('fast').delay(9000).fadeOut('slow');
-                    $('input[id$="btnUpload"]').attr('disabled', 'disabled');
-                    stopVideo();
-
-                    $('input[id$="tbPhotoId"]').val(photoId);
-                    $('input[id$="btnPhotoId"]').click();
-                    return true;
-                },
-                error: function (req, status, err)
-                {
-                    $('#uploadProgress').fadeOut('fast');
-                    console.log("something went wrong: " + status + " error " + err);
-                    $('#photoUploadMessage').removeClass('alert-success').addClass('alert-error').html(err).fadeIn('fast');
-                    return false;
-                }
+                        $('input[id$="btnPhotoId"]').click();
+                        return true;
+                    },
+                    error: function (req, status, err)
+                    {
+                        $('#uploadProgress').hide();
+                        console.log("something went wrong: " + status + " error " + err);
+                        $('#photoUploadMessage').removeClass('alert-success').addClass('alert-danger').html(err).fadeIn('fast');
+                        return false;
+                    }
+                });
             });
         });
     });

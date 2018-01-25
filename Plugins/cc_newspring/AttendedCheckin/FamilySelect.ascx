@@ -167,7 +167,7 @@
                             <div class="col-xs-4">
                                 <Rock:RockTextBox ID="tbNotes" Label="Notes" runat="server" CssClass="col-xs-12"/>
                             </div>
-                            <div class="col-xs-2">
+                            <div class="col-xs-2" runat="server" ID="addbtnTakePhotoContainer">
                                 <p style="font-size: large"><b>Photo</b></p>
                                 <Rock:BootstrapButton ID="btnTakePhoto" runat="server" Text="Take Photo" CssClass="btn btn-primary" OnClick="btnTakePhoto_Click" EnableViewState="false"> <i class="fa fa-camera"></i> </Rock:BootstrapButton>
                             </div>
@@ -296,9 +296,8 @@
                                     <div class="col-xs-3">
                                         <Rock:RockTextBox ID="tbNotes" Placeholder="Notes" runat="server" ValidationGroup="Family" />
                                     </div>
-                                    <div class="col-xs-3">
+                                    <div class="col-xs-3" id="btnFamilyTakePhotoContainer">
                                         <Rock:BootstrapButton ID="btnFamilyTakePhoto" runat="server" Text="Take Photo" CssClass="btn btn-primary" OnClick="btnFamilyTakePhoto_Click" EnableViewState="false"> <i class="fa fa-camera"></i> </Rock:BootstrapButton>
-
                                     </div>
                                 </div>
                             </ItemTemplate>
@@ -437,21 +436,23 @@
 
     $(document).ready(function () {
         setModalEvents();
+        Webcam.set({
+            width: 425,
+            height: 425,
+            image_format: 'jpeg',
+            jpeg_quality: 90,
+            swfURL: '/Plugins/cc_newspring/AttendedCheckin/Scripts/webcam.swf'
+        });
         
-        function getAndStartVideo()
+        function setupWebcam()
         {
-            Webcam.set({
-                width: 425,
-                height: 425,
-                image_format: 'jpeg',
-                jpeg_quality: 90,
-                swfURL: '/Plugins/cc_newspring/AttendedCheckin/Scripts/webcam.swf'
-            });
+            console.log('Attach')
             Webcam.attach('#camera');
         }
 
-        function stopVideo() {
-            Webcam.unfreeze();
+        function closeWebcam() {
+            Webcam.reset();
+            console.log('Reset');
             $('#camera').fadeOut("slow");
             $('input[id$="btnStop"]').hide();
             $('input[id$="btnStart"]').show();
@@ -468,14 +469,11 @@
             $('input[id$="btnStop"]').show();
             $('input[id$="btnPhoto"]').show();
             $('#camera').fadeIn('fast');
-
-            getAndStartVideo();
-
+            setupWebcam();
         });
 
         $(document).on("click", 'input[id$="btnPhoto"]', function () {
             Webcam.freeze();
-//            $('#camera').hide();
             $('input[id$="btnPhoto"]').hide();
             $('input[id$="btnUpload"]').show().removeAttr('disabled');
             $('input[id$="btnRedo"]').show();
@@ -486,56 +484,51 @@
         {
             Webcam.unfreeze();
             $('input[id$="btnRedo"]').hide();
+            $('#photoUploadMessage').hide();
             $('input[id$="btnPhoto"]').show().removeAttr('disabled');
             $('input[id$="btnUpload"]').attr('disabled', 'disabled');
             $('#photoUploadMessage').hide();
         });
 
-        $(document).on("click", 'input[id$="btnCancel"]', function ()
+        $(document).on("click", 'a[id$="mdlPhoto_btnCancel"]', function ()
         {
-            stopVideo();
+            closeWebcam();
         });
 
         $(document).on("click", 'input[id$="btnUpload"]', function ()
         {
-            // This png often errors out trying to parse base64 on the server.
-            //var dataUrl = canvas.toDataURL("png");
-            var canvas = document.getElementById("canvas")
-            var dataUrl = canvas.toDataURL("image/jpeg", 0.95);
+            Webcam.snap(function (dataUrl)
+            {
+                $('#uploadProgress').fadeIn('fast');
+                // post the photo image to the server for the selected person.
+                var request = $.ajax({
+                    type: "POST",
+                    url: '<%=ResolveUrl("~/api/ProfilePicture/AddPhoto") %>',
+                    data: '\"' + dataUrl + '\"',
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (result)
+                    {
+                        var photoId = result;
+                        $('#uploadProgress').hide();
+                        $('#photoUploadMessage').removeClass('alert-error').addClass('alert-success').html('<i class="icon-ok"></i> Success');
+                        $('#photoUploadMessage').fadeIn('fast').delay(9000).fadeOut('slow');
+                        $('input[id$="btnUpload"]').attr('disabled', 'disabled');
+                        closeWebcam();
 
-            $('#uploadProgress').fadeIn('fast');
-            var data = {
-                img64: dataUrl
-            }
+                        $('input[id$="tbPhotoId"]').val(photoId);
 
-            // post the photo image to the server for the selected person.
-            var request = $.ajax({
-                type: "POST",
-                url: '<%=ResolveUrl("~/api/ProfilePicture/AddPhoto") %>',
-                data: JSON.stringify(dataUrl),
-                contentType: "application/json",
-                dataType: "json",
-                success: function (result)
-                {
-                    var photoId = result;
-                    $('#uploadProgress').hide();
-                    $('#photoUploadMessage').removeClass('alert-error').addClass('alert-success').html('<i class="icon-ok"></i> Success');
-                    $('#photoUploadMessage').fadeIn('fast').delay(9000).fadeOut('slow');
-                    $('input[id$="btnUpload"]').attr('disabled', 'disabled');
-                    stopVideo();
-
-                    $('input[id$="tbPhotoId"]').val(photoId);
-
-                    $('input[id$="btnPhotoId"]').click();
-                    return true;
-                },
-                error: function (req, status, err)
-                {
-                    $('#uploadProgress').fadeOut('fast');
-                    console.log("something went wrong: " + status + " error " + err);
-                    $('#photoUploadMessage').removeClass('alert-success').addClass('alert-error').html(err).fadeIn('fast');
-                    return false;
-                }
+                        $('input[id$="btnPhotoId"]').click();
+                        return true;
+                    },
+                    error: function (req, status, err)
+                    {
+                        $('#uploadProgress').hide();
+                        console.log("something went wrong: " + status + " error " + err);
+                        $('#photoUploadMessage').removeClass('alert-success').addClass('alert-danger').html(err).fadeIn('fast');
+                        return false;
+                    }
+                });
             });
         });
     });
