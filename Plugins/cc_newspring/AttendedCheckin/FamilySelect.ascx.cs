@@ -226,7 +226,10 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
             hfNewPersonType.Value = "Visitor";
             dobContainer.Visible = false;
             LoadPersonFields();
+
+            addbtnTakePhotoContainer.Visible = false;
             mdlAddPerson.Show();
+            
         }
 
         /// <summary>
@@ -240,6 +243,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
             hfNewPersonType.Value = "Person";
             dobContainer.Visible = true;
             LoadPersonFields();
+            addbtnTakePhotoContainer.Visible = true;
             mdlAddPerson.Show();
         }
 
@@ -419,7 +423,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
 
                     var btnFamilyTakePhoto = ( BootstrapButton ) e.Item.FindControl( "btnFamilyTakePhoto" );
                     btnFamilyTakePhoto.Text = "<i class='fa fa-check' ></i>";
-                    btnFamilyTakePhoto.CssClass = "btn btn-success disabled";
+                    btnFamilyTakePhoto.CssClass = "btn btn-success";
                     btnFamilyTakePhoto.Enabled = false;
                 }
 
@@ -492,7 +496,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
             if ( !String.IsNullOrWhiteSpace( hfPersonPhotoId.Value ) )
             {
                 btnTakePhoto.Text = "<i class='fa fa-check' ></i>";
-                btnTakePhoto.CssClass = "btn btn-success disabled";
+                btnTakePhoto.CssClass = "btn btn-success";
                 btnTakePhoto.Enabled = false;
             }
 
@@ -1338,7 +1342,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
             {
                 hfPersonPhotoId.Value = photoId;
                 btnTakePhoto.Text = "<i class='fa fa-check' ></i>";
-                btnTakePhoto.CssClass = "btn btn-success disabled";
+                btnTakePhoto.CssClass = "btn btn-success";
                 btnTakePhoto.Enabled = false;
                 mdlAddPerson.Show();
             }
@@ -1350,7 +1354,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                     HiddenField hfFamilyMember = lvNewFamily.Items[index.Value].FindControl( "hfFamilyPhotoId" ) as HiddenField;
                     BootstrapButton btnFamilyTakePhoto = lvNewFamily.Items[index.Value].FindControl( "btnFamilyTakePhoto" ) as BootstrapButton;
                     btnFamilyTakePhoto.Text = "<i class='fa fa-check' ></i>";
-                    btnFamilyTakePhoto.CssClass = "btn btn-success disabled";
+                    btnFamilyTakePhoto.CssClass = "btn btn-success";
                     btnFamilyTakePhoto.Enabled = false;
                     hfFamilyMember.Value = photoId;
                     mdlNewFamily.Show();
@@ -1362,7 +1366,7 @@ namespace RockWeb.Plugins.cc_newspring.AttendedCheckin
                     if ( !String.IsNullOrWhiteSpace( hfFamilyPhotoId.Value ) )
                     {
                         btnFamilyTakePhoto.Text = "<i class='fa fa-check' ></i>";
-                        btnFamilyTakePhoto.CssClass = "btn btn-success disabled";
+                        btnFamilyTakePhoto.CssClass = "btn btn-success";
                         btnFamilyTakePhoto.Enabled = false;
                     }
 
